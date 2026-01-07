@@ -21,9 +21,16 @@ export default function App() {
     setEnteredTaskText('');
   }
 
+  // 1. Silme İşleyicisi
+  function deleteTaskHandler(id) {
+    setTasks((currentTasks) => {
+      // id'si eşleşmeyenleri tut, eşleşeni filtrele (sil)
+      return currentTasks.filter((task) => task.id !== id);
+    });
+  }
+
   return (
     <View style={styles.appContainer}>
-      {/* Giriş Alanı */}
       <View style={styles.inputContainer}>
         <TextInput 
           style={styles.textInput} 
@@ -34,13 +41,18 @@ export default function App() {
         <Button title="Ekle" onPress={addTaskHandler} />
       </View>
 
-      {/* Liste Alanı - FlatList Burada */}
       <View style={styles.listContainer}>
         <FlatList
           data={tasks}
+          // 2. İşleyiciyi ve ID'yi TodoItem'a geçiriyoruz
           renderItem={(itemData) => {
-            // itemData.item bizim veri objemizdir { id: ..., text: ... }
-            return <TodoItem text={itemData.item.text} />;
+            return (
+              <TodoItem 
+                text={itemData.item.text} 
+                id={itemData.item.id} 
+                onDelete={deleteTaskHandler} 
+              />
+            );
           }}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={
@@ -76,16 +88,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 16,
   },
-  // Liste için yeni stiller:
   listContainer: {
-    flex: 5, // Listeye girdiden daha fazla alan ver
-    marginTop: 10, // Biraz boşluk bırakalım
+    flex: 5,
+    marginTop: 10,
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
     color: '#888',
-    fontStyle: 'italic', // Biraz stil katalım
+    fontStyle: 'italic',
   },
 });
